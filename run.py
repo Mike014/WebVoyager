@@ -11,6 +11,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 from prompts import SYSTEM_PROMPT, SYSTEM_PROMPT_TEXT_ONLY
 from openai import OpenAI
@@ -36,6 +38,9 @@ def setup_logger(folder_path):
 def driver_config(args):
     options = webdriver.ChromeOptions()
 
+    options.add_argument("--ignore-certificate-errors")
+    options.add_argument("--allow-running-insecure-content")
+
     if args.save_accessibility_tree:
         args.force_device_scale = True
 
@@ -52,7 +57,10 @@ def driver_config(args):
             "plugins.always_open_pdf_externally": True
         }
     )
-    return options
+
+    service = Service(ChromeDriverManager().install())
+
+    return options, service
 
 
 def format_msg(it, init_msg, pdf_obs, warn_obs, web_img_b64, web_text):
@@ -233,7 +241,8 @@ def exec_action_scroll(info, web_eles, driver_task, args, obs_info):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--test_file', type=str, default='data/test.json')
+    # parser.add_argument('--test_file', type=str, default='data/test.json')
+    parser.add_argument('--test_file', type=str, default='data/tasks_test.jsonl')
     parser.add_argument('--max_iter', type=int, default=5)
     parser.add_argument("--api_key", default="key", type=str, help="YOUR_OPENAI_API_KEY")
     parser.add_argument("--api_model", default="gpt-4-vision-preview", type=str, help="api model name")
@@ -277,7 +286,8 @@ def main():
         setup_logger(task_dir)
         logging.info(f'########## TASK{task["id"]} ##########')
 
-        driver_task = webdriver.Chrome(options=options)
+        options, service = driver_config(args)
+        driver_task = webdriver.Chrome(service=service, options=options)
 
         # About window size, 765 tokens
         # You can resize to height = 512 by yourself (255 tokens, Maybe bad performance)
