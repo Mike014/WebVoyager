@@ -1,1 +1,3 @@
-{"web_name": "Cambridge Dictionary", "id": "Cambridge Dictionary--29", "ques": "Go to the Plus section of Cambridge Dictionary, find Image quizzes and do an easy quiz about Animals and tell me your final score.", "web": "https://dictionary.cambridge.org/"}
+{"id": 1, "ques": "Visit the Wikipedia page for Linkin Park.", "web": "https://en.wikipedia.org/wiki/Linkin_Park"}
+{"id": 2, "ques": "Find and click on 'Lincoln Park' in the disambiguation note.", "web": "https://en.wikipedia.org/wiki/Linkin_Park", "action": "click", "target": "a[title='Lincoln Park (Chicago)']"}
+{"id": 3, "ques": "Extract the first sentence of the Lincoln Park Wikipedia page.", "web": "https://en.wikipedia.org/wiki/Lincoln_Park", "action": "extract", "target": "p"}
